@@ -75,7 +75,8 @@ def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_
             print(f"This place is already used!")
             break
 
-def ships_placement(board, board_size, coordinates, ships, alphabet):
+def ships_placement(board, board_size, coordinates, ships, alphabet, active_player):
+    print(f"Hello {active_player}! Please place Your ships on the board!")
     list_ships = list(ships)
     ship_length = {"1x5":5, "1x4":4, "1x3":3, "1x2":2, "1x1":1}
     discrete_board = copy.deepcopy(board)
@@ -142,6 +143,57 @@ def available_ships(board_size):
 
     return available_ships
 
+def player_name():
+
+    player_1 = input(f"Hello! What is name of Player 1? ")
+    player_2 = input(f"Hello! What is name of Player 2? ")
+    return player_1, player_2
+
+def change_player(player_1, player_2, active_player):
+    active_player = player_1 if active_player == player_2 else player_1 
+    return active_player
+
+
+
+
+def gameplay(active_player, shooting_board, coordinates, board_player):
+
+    print_board(shooting_board)
+    shot_coordinate = input(f"Please choose coordinates to shoot!")
+    while True:
+        if shot_coordinate.upper() in coordinates:
+            row, col = coordinates[shot_coordinate.upper()]
+            if shooting_board[row][col] == "0":
+                if board_player[row][col] == "X":
+                    shooting_board[row][col] = "H"
+                    break
+                else:
+                    shooting_board[row][col] = "M"
+                    break
+            else:
+                print("This place is already taken!")
+        else:
+            print(f"Please select the valid coordinate!")
+
+def is_won(active_shooting_board, active_player_board):
+    x_count = 0
+    h_count = 0
+
+    for element in active_shooting_board:
+        h_count += element.count("H")
+    for element in active_player_board:
+        x_count += element.count("X")
+
+    return x_count == h_count
+
+def change_player_board(board_player_1, board_player_2, active_player_board):
+    active_player_board = board_player_1 if active_player_board == board_player_2 else board_player_2
+    return active_player_board
+
+def change_shooting_board(shooting_board_player_1, shooting_board_player_2, active_shooting_board):
+    active_shooting_board = shooting_board_player_1 if active_shooting_board == shooting_board_player_2 else shooting_board_player_2 
+    return active_shooting_board
+
 
 def main():
     alphabet = string.ascii_uppercase        
@@ -150,8 +202,33 @@ def main():
     print_board(board, board_size, alphabet)
     coordinates = coordinates_dict(board_size, alphabet)
     ships = available_ships(board_size)
-    print(coordinates)
-    board_a = ships_placement(board, board_size, coordinates, ships, alphabet)
-    print_board(board_a, board_size, alphabet)
+    player_1, player_2 = player_name()
+    active_player = player_1
+    board_player_1 = ships_placement(board, board_size, coordinates, ships, alphabet, active_player)
+    print_board(board_player_1, board_size, alphabet)
+    board = init_board(board_size)
+    active_player = change_player(player_1, player_2, active_player)
+    board_player_2 = ships_placement(board, board_size, coordinates, ships, alphabet, active_player)
+    print_board(board_player_2, board_size, alphabet)
+    shooting_board_player_1 = init_board(board_size)
+    shooting_board_player_2 = init_board(board_size)
+    active_player = change_player(player_1, player_2, active_player)
+    active_player_board = board_player_2
+    active_shooting_board = shooting_board_player_1
+
+    while is_won(active_shooting_board, active_player_board) == False:
+        gameplay(active_player, active_shooting_board, coordinates, active_player_board)
+        if is_won(active_shooting_board, active_player_board):
+            print(f"Congratulations! {active_player} You have won! ")
+            break
+        active_player = change_player(player_1, player_2, active_player)
+        active_player_board = board_player_2
+        active_shooting_board = shooting_board_player_1
+    
+
+    
+
+
+
 
 main()
