@@ -22,8 +22,21 @@ def user_input_ver_or_hor():
         else:
             print("Please select a valid orientation! ")
 
-def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col):
-    ship_len = ship_length[list_ships[0]]
+
+def is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
+    temp_row = row
+    temp_col = col
+    for i in range(ship_len):
+        if (temp_row, temp_col) not in coordinates.values():
+            return False
+        if user_input_orientation.lower() == "h" and (temp_row, temp_col) in coordinates.values():
+           temp_col += 1 
+        if user_input_orientation.lower() == "v" and (temp_row, temp_col) in coordinates.values():
+            temp_row += 1
+    return True
+
+def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len):
+    # ship_len = ship_length[list_ships[0]]
     # row, col = coordinates[user_input.upper()]
     for i in range(ship_len):
         if discrete_board[row][col] == "0":
@@ -75,37 +88,41 @@ def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_
             print(f"This place is already used!")
             break
 
-def ships_placement(board, board_size, coordinates, ships, alphabet, active_player):
-    print(f"Hello {active_player}! Please place Your ships on the board!")
+def ships_placement(board, board_size, coordinates, alphabet, active_player):
+    print(f"\nHello {active_player}! Please place Your ships on the board!")
+    # print_board(board, board_size, alphabet)
+    ships = available_ships(board_size)
     list_ships = list(ships)
     ship_length = {"1x5":5, "1x4":4, "1x3":3, "1x2":2, "1x1":1}
     discrete_board = copy.deepcopy(board)
     while len(ships) > 0:
-        user_input = input(f"Please place your ships on the map. Available ships for placement: {ships}. Current ship being placed: {list_ships[0]}. Please select a valid coordinate: ")
+        print_board(board, board_size, alphabet)
+        user_input = input(f"{active_player} please place your ships on the map. Available ships for placement: {ships}. Current ship being placed: {list_ships[0]}. Please select a valid coordinate: ")
         user_input_orientation = user_input_ver_or_hor()
         row, col = coordinates[user_input.upper()]
+        ship_len = ship_length[list_ships[0]]
         if user_input.upper() in coordinates and discrete_board[row][col] == "0":
-            try:
-                mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col)
+            if is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
+                mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len)
                 ships[list_ships[0]] -= 1
 
                 if ships[list_ships[0]] == 0:
                     ships.pop(list_ships[0])
 
                 list_ships = list(ships)
-
-                print("Board")
-                print_board(board, board_size, alphabet)
-                print("Discrete_Board")
-                print_board(discrete_board, board_size, alphabet)
-            except:
+                # print("Board")
+                # print_board(board, board_size, alphabet)
+                # print("Discrete_Board")
+                # print_board(discrete_board, board_size, alphabet)
+            else:
                 print(f"Coordinate not in board! Please insert valid input!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
         else:
-            print("Please select a valid coordinate!")   
+            print("Please select a valid coordinate!")
+    print(f"\nThis is the {active_player}'s Battleship Board")  
+    print_board(board, board_size, alphabet)
+    input("Press Enter to continue...")
     return board
-
-
 
 def init_board(board_size):
     return  [["0"] * board_size for i in range(board_size)] 
@@ -114,10 +131,12 @@ def init_board(board_size):
 
 def print_board(board, board_size, alphabet):
     first_row = [str(x+1) + " "  for x in range(board_size)]
+    print("\n")
     print(f"  | {'| '.join(first_row)}")
     for element in range(len(board)):
         print(f"{board_size* '--+-'}--")
         print(alphabet[element]+ " | "+ ' | '.join(board[element]))
+    print("\n")
 
 
 def coordinates_dict(board_size, alphabet):
@@ -144,22 +163,19 @@ def available_ships(board_size):
     return available_ships
 
 def player_name():
-
-    player_1 = input(f"Hello! What is name of Player 1? ")
-    player_2 = input(f"Hello! What is name of Player 2? ")
+    print(10*chr(9995))
+    player_1 = input(f"Hello! What is name of Player 1? \n")
+    player_2 = input(f"Hello! What is name of Player 2? \n")
     return player_1, player_2
 
 def change_player(player_1, player_2, active_player):
-    active_player = player_1 if active_player == player_2 else player_1 
+    active_player = player_1 if active_player == player_2 else player_2 
     return active_player
 
-
-
-
-def gameplay(active_player, shooting_board, coordinates, board_player):
-
-    print_board(shooting_board)
-    shot_coordinate = input(f"Please choose coordinates to shoot!")
+def gameplay(active_player, shooting_board, coordinates, board_player, board_size, alphabet):
+    print(f"{active_player} it is your shooting board!")
+    print_board(shooting_board, board_size, alphabet)
+    shot_coordinate = input(f"Please choose coordinates to shoot: ")
     while True:
         if shot_coordinate.upper() in coordinates:
             row, col = coordinates[shot_coordinate.upper()]
@@ -174,6 +190,12 @@ def gameplay(active_player, shooting_board, coordinates, board_player):
                 print("This place is already taken!")
         else:
             print(f"Please select the valid coordinate!")
+    print(f"{active_player}, check your result.")
+    print_board(shooting_board, board_size, alphabet)
+    input("Press Enter to continue...")
+
+
+
 
 def is_won(active_shooting_board, active_player_board):
     x_count = 0
@@ -201,15 +223,15 @@ def main():
     board = init_board(board_size)
     print_board(board, board_size, alphabet)
     coordinates = coordinates_dict(board_size, alphabet)
-    ships = available_ships(board_size)
+    # ships = available_ships(board_size)
     player_1, player_2 = player_name()
     active_player = player_1
-    board_player_1 = ships_placement(board, board_size, coordinates, ships, alphabet, active_player)
-    print_board(board_player_1, board_size, alphabet)
+    board_player_1 = ships_placement(board, board_size, coordinates, alphabet, active_player)
+    # print_board(board_player_1, board_size, alphabet)
     board = init_board(board_size)
     active_player = change_player(player_1, player_2, active_player)
-    board_player_2 = ships_placement(board, board_size, coordinates, ships, alphabet, active_player)
-    print_board(board_player_2, board_size, alphabet)
+    board_player_2 = ships_placement(board, board_size, coordinates, alphabet, active_player)
+    # print_board(board_player_2, board_size, alphabet)
     shooting_board_player_1 = init_board(board_size)
     shooting_board_player_2 = init_board(board_size)
     active_player = change_player(player_1, player_2, active_player)
@@ -217,18 +239,15 @@ def main():
     active_shooting_board = shooting_board_player_1
 
     while is_won(active_shooting_board, active_player_board) == False:
-        gameplay(active_player, active_shooting_board, coordinates, active_player_board)
+        gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet)
+        print_board(active_shooting_board, board_size, alphabet)
         if is_won(active_shooting_board, active_player_board):
             print(f"Congratulations! {active_player} You have won! ")
             break
         active_player = change_player(player_1, player_2, active_player)
-        active_player_board = board_player_2
-        active_shooting_board = shooting_board_player_1
+        active_player_board = change_player_board(board_player_1, board_player_2, active_player_board)
+        active_shooting_board = change_shooting_board(shooting_board_player_1, shooting_board_player_2, active_shooting_board)
     
-
-    
-
-
-
-
 main()
+
+
