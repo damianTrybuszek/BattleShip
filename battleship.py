@@ -408,7 +408,6 @@ def battleships_AI_Human():
         active_shooting_board = change_shooting_board(shooting_board_player_1, shooting_board_player_2, active_shooting_board)
         active_sunken_ships_coordinates = change_sunken_ships(sunken_ships_coordinates_1, sunken_ships_coordinates_2, active_sunken_ships_coordinates)
 
-
 def battleships_AI_AI():
     turn = 0
     alphabet = string.ascii_uppercase        
@@ -442,20 +441,8 @@ def battleships_AI_AI():
         active_shooting_board = change_shooting_board(shooting_board_player_1, shooting_board_player_2, active_shooting_board)
         active_sunken_ships_coordinates = change_sunken_ships(sunken_ships_coordinates_1, sunken_ships_coordinates_2, active_sunken_ships_coordinates)
 
-
 def is_tie(turn, board_size):
     return turn // 2 >= (board_size**2)*1
-
-# def is_sunken(shooting_board, sunken_ships_coordinates):
-#     for i in len(sunken_ships_coordinates):
-#         if all(for j in len(sunken_ships_coordinates[i]):
-
-#         for j in len(sunken_ships_coordinates[i]):
-#             # if shootingboard[[i[j[0]]]][[i[j[1]]]] = "H"
-#             if shootingboard[[i[j[0]]]][[i[j[1]]]] = "H"
-
-#         for element in sunken_ships_coordinates:
-#             if all(shooting_board[element]) == "H"
 
 def is_sunken(shooting_board, sunken_ships_coordinates):
     for element in sunken_ships_coordinates:
@@ -468,15 +455,7 @@ def is_sunken(shooting_board, sunken_ships_coordinates):
             for i in element:
                 shooting_board[i[0]][i[1]] = "S"
 
-
-
 def main():
     main_menu()
 
-
-# if __name__ == '__main__':
-#     main()
-
 main()
-
-
