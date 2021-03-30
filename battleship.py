@@ -206,7 +206,7 @@ def change_player(player_1, player_2, active_player):
     active_player = player_1 if active_player == player_2 else player_2 
     return active_player
 
-def gameplay(active_player, shooting_board, coordinates, board_player, board_size, alphabet):
+def gameplay(active_player, shooting_board, coordinates, board_player, board_size, alphabet, sunken_ships_coordinates):
     print(f"{active_player} it is your shooting board!")
     print_board(shooting_board, board_size, alphabet)
     shot_coordinate = input(f"Please choose coordinates to shoot: ")
@@ -226,14 +226,14 @@ def gameplay(active_player, shooting_board, coordinates, board_player, board_siz
                 print("This place is already taken!")
         else:
             print(f"Please select the valid coordinate!")
-    # is_sunken(board_player, shooting_board)
+    is_sunken(shooting_board, sunken_ships_coordinates)
     print(f"{active_player}, check your result.")
     print_board(shooting_board, board_size, alphabet)
     if is_won(shooting_board, board_player):
         print(f"Congratulations! {active_player} You have won! ")
     input("Press Enter to continue...")
 
-def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_size, alphabet):
+def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_size, alphabet, sunken_ships_coordinates):
     while True:
         shot_coordinate = random.choice(list(coordinates.keys()))
         row, col = coordinates[shot_coordinate.upper()]
@@ -246,7 +246,7 @@ def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_
                 shooting_board[row][col] = "M"
                 print(f"Uuuuupsssssssss! You have missed!")                
                 break
-    # is_sunken(board_player, shooting_board)
+    is_sunken(shooting_board, sunken_ships_coordinates)
     print(f"{active_player}, result.")
     print_board(shooting_board, board_size, alphabet)
     if is_won(shooting_board, board_player):
@@ -257,7 +257,7 @@ def is_won(active_shooting_board, active_player_board):
     x_count = 0
     h_count = 0
     for element in active_shooting_board:
-        h_count += element.count("H")
+        h_count += element.count("S")
     for element in active_player_board:
         x_count += element.count("X")
     return x_count == h_count
@@ -295,7 +295,7 @@ def battleships_Human_Human():
     active_sunken_ships_coordinates = sunken_ships_coordinates_2
 
     while is_won(active_shooting_board, active_player_board) == False:
-        gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet)
+        gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         if is_won(active_shooting_board, active_player_board):
             break
         turn +=1
@@ -358,9 +358,9 @@ def battleships_Human_AI():
 
     while is_won(active_shooting_board, active_player_board) == False:
         if active_player == player_1:
-            gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet)
+            gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         elif active_player == player_2:
-            gameplay_AI(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet)
+            gameplay_AI(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         if is_won(active_shooting_board, active_player_board):
             break
         turn +=1
@@ -392,12 +392,11 @@ def battleships_AI_Human():
     active_shooting_board = shooting_board_player_2
     active_sunken_ships_coordinates = sunken_ships_coordinates_2
 
-
     while is_won(active_shooting_board, active_player_board) == False:
         if active_player == player_2:
-            gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet)
+            gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         elif active_player == player_1:
-            gameplay_AI(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet)
+            gameplay_AI(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         if is_won(active_shooting_board, active_player_board):
             break
         turn +=1
@@ -431,7 +430,7 @@ def battleships_AI_AI():
     active_sunken_ships_coordinates = sunken_ships_coordinates_2
 
     while is_won(active_shooting_board, active_player_board) == False:
-        gameplay_AI(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet)
+        gameplay_AI(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         if is_won(active_shooting_board, active_player_board):
             break
         turn +=1
@@ -445,16 +444,29 @@ def battleships_AI_AI():
 
 
 def is_tie(turn, board_size):
-    return turn // 2 >= (board_size**2)*0.75
+    return turn // 2 >= (board_size**2)*1
+
+# def is_sunken(shooting_board, sunken_ships_coordinates):
+#     for i in len(sunken_ships_coordinates):
+#         if all(for j in len(sunken_ships_coordinates[i]):
+
+#         for j in len(sunken_ships_coordinates[i]):
+#             # if shootingboard[[i[j[0]]]][[i[j[1]]]] = "H"
+#             if shootingboard[[i[j[0]]]][[i[j[1]]]] = "H"
+
+#         for element in sunken_ships_coordinates:
+#             if all(shooting_board[element]) == "H"
 
 def is_sunken(shooting_board, sunken_ships_coordinates):
-for i in sunken_ships_coordinates:
-    for j in sunken_ships_coordinates:
-        if shootingboard[[i[j[0]]]][[i[j[1]]]] = "H"
-
     for element in sunken_ships_coordinates:
-        if all(shooting_board[element]) == "H"
-
+        ship_len = len(element)
+        counter = 0
+        for i in element:
+            if shooting_board[i[0]][i[1]] == "H":
+                counter += 1
+        if counter == ship_len:
+            for i in element:
+                shooting_board[i[0]][i[1]] = "S"
 
 
 
