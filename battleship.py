@@ -4,7 +4,7 @@ import copy
 import random
 import time
 from termcolor import colored
-
+import ai_code
 
 def user_input_board_size():
     while True:
@@ -420,6 +420,14 @@ def battleships_AI_AI():
         active_sunken_ships_coordinates = change_active_item(sunken_ships_coordinates_1, sunken_ships_coordinates_2, active_sunken_ships_coordinates)
 
 def main_menu():
+    print("""
+     __  ___        _           __  ___                   
+    /  |/  /____ _ (_)____     /  |/  /___   ____   __  __
+   / /|_/ // __ `// // __ \   / /|_/ // _ \ / __ \ / / / /
+  / /  / // /_/ // // / / /  / /  / //  __// / / // /_/ / 
+ /_/  /_/ \__,_//_//_/ /_/  /_/  /_/ \___//_/ /_/ \__,_/  
+                                                         
+    """)
     print(f"Hello, please choose the game mode!")
     print(f"""
     1. Human vs Human 
@@ -433,7 +441,13 @@ def main_menu():
                 battleships_Human_Human()
                 break
             elif gamemode == "2":
-                who_starts= input(f"Please type 1 if you would like to start, or 2 if AI: ")
+                print("""
+    Okay! Vs the AI it is! Who goes first?
+                
+    1 - I want to go first!
+    2 - AI should probably go first...
+                """)
+                who_starts= input(f"Please choose who goes first: ")
                 if who_starts == "1":
                     battleships_Human_AI()
                     break
