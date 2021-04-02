@@ -33,63 +33,92 @@ def is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
         if (temp_row, temp_col) not in coordinates.values():
             return False
         if user_input_orientation.lower() == "h" and (temp_row, temp_col) in coordinates.values():
-           temp_col += 1 
+            temp_col += 1 
         if user_input_orientation.lower() == "v" and (temp_row, temp_col) in coordinates.values():
             temp_row += 1
     return True
 
 def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len):
     sunken_ships = []
+    discrete_row = copy.deepcopy(row)
+    discrete_col = copy.deepcopy(col)
     for i in range(ship_len):
         if discrete_board[row][col] == "-":
             board[row][col] = "X"
-            discrete_board[row][col] = "X"
+            # discrete_board[row][col] = "X"
             sunken_ships.append((row, col))
-            if user_input_orientation.lower() == "h" and (i == 0):
-                if (row-1, col) in coordinates.values(): 
-                    discrete_board[row-1][col] = "X"
-                if (row, col-1) in coordinates.values():
-                    discrete_board[row][col-1] = "X"
-                if (row+1, col) in coordinates.values():
-                    discrete_board[row+1][col] = "X"
-            if user_input_orientation.lower() == "h" and (i == ship_len -1):
-                if (row, col+1) in coordinates.values():
-                    discrete_board[row][col+1] = "X"
-                if (row-1, col) in coordinates.values():
-                    discrete_board[row-1][col] = "X"
-                if (row+1, col) in coordinates.values():
-                    discrete_board[row+1][col] = "X"
-            if user_input_orientation.lower() == "h" and i in range(1, ship_len -1):
-                if (row-1, col) in coordinates.values():
-                    discrete_board[row-1][col] = "X"
-                if (row+1, col) in coordinates.values():
-                    discrete_board[row+1][col] = "X"
             if user_input_orientation.lower() == "h":
                 col += 1
-            if user_input_orientation.lower() == "v" and (i == 0):
-                if (row, col-1) in coordinates.values(): 
-                    discrete_board[row][col-1] = "X"
-                if (row-1, col) in coordinates.values():
-                    discrete_board[row-1][col] = "X"
-                if (row, col+1) in coordinates.values():
-                    discrete_board[row][col+1] = "X"
-            if user_input_orientation.lower() == "v" and (i == ship_len - 1):
-                if (row+1, col) in coordinates.values():
-                    discrete_board[row+1][col] = "X"
-                if (row, col-1) in coordinates.values():
-                    discrete_board[row][col-1] = "X"
-                if (row, col+1) in coordinates.values():
-                    discrete_board[row][col+1] = "X"
-            if user_input_orientation.lower() == "v" and i in range(1, ship_len - 1):
-                if (row, col-1) in coordinates.values():
-                    discrete_board[row][col-1] = "X"
-                if (row, col+1) in coordinates.values():
-                    discrete_board[row][col+1] = "X"
-            if user_input_orientation.lower() == "v":
+            elif user_input_orientation.lower() == "v":
                 row += 1
+            # if user_input_orientation.lower() == "h" and (i == 0):
+            #     if (row-1, col) in coordinates.values(): 
+            #         discrete_board[row-1][col] = "X"
+            #     if (row, col-1) in coordinates.values():
+            #         discrete_board[row][col-1] = "X"
+            #     if (row+1, col) in coordinates.values():
+            #         discrete_board[row+1][col] = "X"
+            # if user_input_orientation.lower() == "h" and (i == ship_len -1):
+            #     if (row, col+1) in coordinates.values():
+            #         discrete_board[row][col+1] = "X"
+            #     if (row-1, col) in coordinates.values():
+            #         discrete_board[row-1][col] = "X"
+            #     if (row+1, col) in coordinates.values():
+            #         discrete_board[row+1][col] = "X"
+            # if user_input_orientation.lower() == "h" and i in range(1, ship_len -1):
+            #     if (row-1, col) in coordinates.values():
+            #         discrete_board[row-1][col] = "X"
+            #     if (row+1, col) in coordinates.values():
+            #         discrete_board[row+1][col] = "X"
+            # if user_input_orientation.lower() == "h":
+            #     col += 1
+            # if user_input_orientation.lower() == "v" and (i == 0):
+            #     if (row, col-1) in coordinates.values(): 
+            #         discrete_board[row][col-1] = "X"
+            #     if (row-1, col) in coordinates.values():
+            #         discrete_board[row-1][col] = "X"
+            #     if (row, col+1) in coordinates.values():
+            #         discrete_board[row][col+1] = "X"
+            # if user_input_orientation.lower() == "v" and (i == ship_len - 1):
+            #     if (row+1, col) in coordinates.values():
+            #         discrete_board[row+1][col] = "X"
+            #     if (row, col-1) in coordinates.values():
+            #         discrete_board[row][col-1] = "X"
+            #     if (row, col+1) in coordinates.values():
+            #         discrete_board[row][col+1] = "X"
+            # if user_input_orientation.lower() == "v" and i in range(1, ship_len - 1):
+            #     if (row, col-1) in coordinates.values():
+            #         discrete_board[row][col-1] = "X"
+            #     if (row, col+1) in coordinates.values():
+            #         discrete_board[row][col+1] = "X"
+            # if user_input_orientation.lower() == "v":
+            #     row += 1
         else: 
             print(f"This place is already used!")
             break
+
+    for i in range(ship_len):
+        discrete_board[discrete_row][discrete_col] = "X"
+        if user_input_orientation.lower() == "h":
+            if (discrete_row-1, discrete_col) in coordinates.values():
+                discrete_board[discrete_row-1][discrete_col] = "X"
+            if (discrete_row+1, discrete_col) in coordinates.values():
+                discrete_board[discrete_row+1][discrete_col] = "X"
+            if (discrete_row, discrete_col-1) in coordinates.values():
+                discrete_board[discrete_row][discrete_col-1] = "X"
+            if (discrete_row, discrete_col+1) in coordinates.values():
+                discrete_board[discrete_row][discrete_col+1] = "X"
+            discrete_col += 1
+        elif user_input_orientation.lower() == "v":
+            if (discrete_row-1, discrete_col) in coordinates.values():
+                discrete_board[discrete_row-1][discrete_col] = "X"
+            if (discrete_row+1, discrete_col) in coordinates.values():
+                discrete_board[discrete_row+1][discrete_col] = "X"
+            if (discrete_row, discrete_col-1) in coordinates.values():
+                discrete_board[discrete_row][discrete_col-1] = "X"
+            if (discrete_row, discrete_col+1) in coordinates.values():
+                discrete_board[discrete_row][discrete_col+1] = "X"
+            discrete_col += 1
     return sunken_ships
 
 def ships_placement(board, board_size, coordinates, alphabet, active_player):
@@ -113,7 +142,7 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
                     ships.pop(list_ships[0])
                 list_ships = list(ships)
             else:
-                print(f"Coordinate not in board! Please insert valid input!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                print(f"Ooops, you can't place a ship like that! Try again!")
         else:
             print("Please select a valid coordinate!")
         sunken_ships_coordinates.append(sunken_ship)
