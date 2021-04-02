@@ -4,7 +4,6 @@ import copy
 import random
 import time
 from termcolor import colored
-import ai_code
 
 def user_input_board_size():
     while True:
@@ -118,7 +117,7 @@ def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_
                 discrete_board[discrete_row][discrete_col-1] = "X"
             if (discrete_row, discrete_col+1) in coordinates.values():
                 discrete_board[discrete_row][discrete_col+1] = "X"
-            discrete_col += 1
+            discrete_row += 1
     return sunken_ships
 
 def ships_placement(board, board_size, coordinates, alphabet, active_player):
@@ -131,21 +130,24 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
     while len(ships) > 0:
         print_board(board, board_size, alphabet)
         user_input = input(f"{active_player} please place your ships on the map. Available ships for placement: {ships}. Current ship being placed: {list_ships[0]}. Please select a valid coordinate: ")
-        user_input_orientation = user_input_ver_or_hor()
-        row, col = coordinates[user_input.upper()]
-        ship_len = ship_length[list_ships[0]]
-        if user_input.upper() in coordinates and discrete_board[row][col] == "-":
-            if is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
-                sunken_ship = mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len)
-                ships[list_ships[0]] -= 1
-                if ships[list_ships[0]] == 0:
-                    ships.pop(list_ships[0])
-                list_ships = list(ships)
+        if user_input.upper() in coordinates.keys():
+            user_input_orientation = user_input_ver_or_hor()
+            row, col = coordinates[user_input.upper()]
+            ship_len = ship_length[list_ships[0]]
+            if discrete_board[row][col] == "-":
+                if is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
+                    sunken_ship = mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len)
+                    ships[list_ships[0]] -= 1
+                    if ships[list_ships[0]] == 0:
+                        ships.pop(list_ships[0])
+                    list_ships = list(ships)
+                    sunken_ships_coordinates.append(sunken_ship)
+                else:
+                    print(f"Ooops, you can't place a ship like that! Try again!")
             else:
-                print(f"Ooops, you can't place a ship like that! Try again!")
+                print(f"{user_input.upper()} is already taken! Try anaother place. ")
         else:
             print("Please select a valid coordinate!")
-        sunken_ships_coordinates.append(sunken_ship)
     print(f"\nThis is the {active_player}'s Battleship Board")  
     print_board(board, board_size, alphabet)
     input("Press Enter to continue...")
@@ -162,18 +164,18 @@ def ships_placement_AI(board, board_size, coordinates, alphabet, active_player):
         user_input_orientation = random.choice(["h","v"])
         row, col = coordinates[user_input]
         ship_len = ship_length[list_ships[0]]
-        if user_input.upper() in coordinates and discrete_board[row][col] == "-":
+        if discrete_board[row][col] == "-":
             if is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
                 sunken_ship = mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len)
                 ships[list_ships[0]] -= 1
                 if ships[list_ships[0]] == 0:
                     ships.pop(list_ships[0])
                 list_ships = list(ships)
+                sunken_ships_coordinates.append(sunken_ship)
             else:
                 continue
         else:
             continue
-        sunken_ships_coordinates.append(sunken_ship)
     print(f"\nThis is the {active_player}'s Battleship Board")  
     print_board(board, board_size, alphabet)
     time.sleep(2)
@@ -241,7 +243,7 @@ def gameplay(active_player, shooting_board, coordinates, board_player, board_siz
     print_board(shooting_board, board_size, alphabet)
     shot_coordinate = input(f"Please choose coordinates to shoot: ")
     while True:
-        if shot_coordinate.upper() in coordinates:
+        if shot_coordinate.upper() in coordinates.keys():
             row, col = coordinates[shot_coordinate.upper()]
             if shooting_board[row][col] == "-":
                 if board_player[row][col] == "X":
@@ -253,7 +255,7 @@ def gameplay(active_player, shooting_board, coordinates, board_player, board_siz
                     print(f"Uuuuupsssssssss! You have missed!") 
                     break
             else:
-                print("This place is already taken!")
+                print("This place has already been selected!")
         else:
             print(f"Please select the valid coordinate!")
     is_sunken(shooting_board, sunken_ships_coordinates)
@@ -281,7 +283,7 @@ def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_
     print_board(shooting_board, board_size, alphabet)
     if is_won(shooting_board, board_player):
         print(f"Congratulations! {active_player} has won! ")
-    # time.sleep(1)
+    time.sleep(0.5)
 
 def is_won(active_shooting_board, active_player_board):
     x_count = 0
@@ -293,7 +295,7 @@ def is_won(active_shooting_board, active_player_board):
     return x_count == h_count
 
 def is_tie(turn, board_size):
-    return turn // 2 >= (board_size**2)*1
+    return turn // 2 >= (board_size**2)*0.75
 
 def is_sunken(shooting_board, sunken_ships_coordinates):
     for element in sunken_ships_coordinates:
@@ -417,7 +419,7 @@ def battleships_AI_Human():
 
 def battleships_AI_AI():
     turn = 0
-    alphabet = string.ascii_uppercase        
+    alphabet = string.ascii_uppercase
     board_size = user_input_board_size()
     board = init_board(board_size)
     print_board(board, board_size, alphabet)
@@ -431,8 +433,8 @@ def battleships_AI_AI():
     shooting_board_player_1 = init_board(board_size)
     shooting_board_player_2 = init_board(board_size)
     active_player = change_active_item(player_1, player_2, active_player)
-    active_player_board = board_player_1
-    active_shooting_board = shooting_board_player_2
+    active_player_board = board_player_2
+    active_shooting_board = shooting_board_player_1
     active_sunken_ships_coordinates = sunken_ships_coordinates_2
 
     while is_won(active_shooting_board, active_player_board) == False:

@@ -1,8 +1,6 @@
 To be fixed:
-1 - User input of cooridantes check fails, 'QA5' produces an error
-2 - User input of horizontal / vertical check fails, 'QA5' produces an error
-3 - is_sunken AI_AI does not work for anything bigger than a single ship
-4 - Code runs twice?
 
 To be implemented:
-1 - AI Code goes into separate file
+1 - Clearer indication who's turn is it and what's happening
+2 - When you sink a ship, a border is drawn where no shots can be fired
+3 - AI Code goes into separate file
