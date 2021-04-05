@@ -1,29 +1,36 @@
-import user_inputs
 import string
 import copy
 import random
 import time
+import sys
 from termcolor import colored
+import graphics
+
+def game_quit(text):
+    if text.lower() == 'quit':
+        sys.exit()
 
 def user_input_board_size():
     while True:
         board_size = input("Please insert board size: ")
+        game_quit(board_size)
         if board_size.isdigit(): 
             board_size = int(board_size)
             if board_size in range(5,11):
                 return board_size
             else:
-                print(f"Please provide input in the correct range!")
+                print(f"Please provide the number within the correct range (minimum - 5, maximum - 10)!")
         else:
-            print(f"Please provide valid input!!")
+            print(f"Please provide valid numeric input (5-10)!")
 
 def user_input_ver_or_hor():
     while True:
         user_input_orientation = input(f"Please select orientation (H)oritzontal or (V)ertical: ")
+        game_quit(user_input_orientation)
         if user_input_orientation.lower() == "h" or user_input_orientation.lower() == "v":
             return user_input_orientation
         else:
-            print("Please select a valid orientation! ")
+            print("Please select a valid orientation ('H' or 'V')! ")
 
 def is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
     temp_row = row
@@ -44,54 +51,11 @@ def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_
     for i in range(ship_len):
         if discrete_board[row][col] == "-":
             board[row][col] = "X"
-            # discrete_board[row][col] = "X"
             sunken_ships.append((row, col))
             if user_input_orientation.lower() == "h":
                 col += 1
             elif user_input_orientation.lower() == "v":
                 row += 1
-            # if user_input_orientation.lower() == "h" and (i == 0):
-            #     if (row-1, col) in coordinates.values(): 
-            #         discrete_board[row-1][col] = "X"
-            #     if (row, col-1) in coordinates.values():
-            #         discrete_board[row][col-1] = "X"
-            #     if (row+1, col) in coordinates.values():
-            #         discrete_board[row+1][col] = "X"
-            # if user_input_orientation.lower() == "h" and (i == ship_len -1):
-            #     if (row, col+1) in coordinates.values():
-            #         discrete_board[row][col+1] = "X"
-            #     if (row-1, col) in coordinates.values():
-            #         discrete_board[row-1][col] = "X"
-            #     if (row+1, col) in coordinates.values():
-            #         discrete_board[row+1][col] = "X"
-            # if user_input_orientation.lower() == "h" and i in range(1, ship_len -1):
-            #     if (row-1, col) in coordinates.values():
-            #         discrete_board[row-1][col] = "X"
-            #     if (row+1, col) in coordinates.values():
-            #         discrete_board[row+1][col] = "X"
-            # if user_input_orientation.lower() == "h":
-            #     col += 1
-            # if user_input_orientation.lower() == "v" and (i == 0):
-            #     if (row, col-1) in coordinates.values(): 
-            #         discrete_board[row][col-1] = "X"
-            #     if (row-1, col) in coordinates.values():
-            #         discrete_board[row-1][col] = "X"
-            #     if (row, col+1) in coordinates.values():
-            #         discrete_board[row][col+1] = "X"
-            # if user_input_orientation.lower() == "v" and (i == ship_len - 1):
-            #     if (row+1, col) in coordinates.values():
-            #         discrete_board[row+1][col] = "X"
-            #     if (row, col-1) in coordinates.values():
-            #         discrete_board[row][col-1] = "X"
-            #     if (row, col+1) in coordinates.values():
-            #         discrete_board[row][col+1] = "X"
-            # if user_input_orientation.lower() == "v" and i in range(1, ship_len - 1):
-            #     if (row, col-1) in coordinates.values():
-            #         discrete_board[row][col-1] = "X"
-            #     if (row, col+1) in coordinates.values():
-            #         discrete_board[row][col+1] = "X"
-            # if user_input_orientation.lower() == "v":
-            #     row += 1
         else: 
             print(f"This place is already used!")
             break
@@ -130,6 +94,7 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
     while len(ships) > 0:
         print_board(board, board_size, alphabet)
         user_input = input(f"{active_player} please place your ships on the map. Available ships for placement: {ships}. Current ship being placed: {list_ships[0]}. Please select a valid coordinate: ")
+        game_quit(user_input)
         if user_input.upper() in coordinates.keys():
             user_input_orientation = user_input_ver_or_hor()
             row, col = coordinates[user_input.upper()]
@@ -145,7 +110,7 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
                 else:
                     print(f"Ooops, you can't place a ship like that! Try again!")
             else:
-                print(f"{user_input.upper()} is already taken! Try anaother place. ")
+                print(f"{user_input.upper()} is already taken! Try another one. ")
         else:
             print("Please select a valid coordinate!")
     print(f"\nThis is the {active_player}'s Battleship Board")  
@@ -218,12 +183,15 @@ def available_ships(board_size):
 def player_name():
     print(10*chr(9995))
     player_1 = input(f"Hello! What is name of Player 1? \n")
+    game_quit(player_1)
     player_2 = input(f"Hello! What is name of Player 2? \n")
+    game_quit(player_2)
     return player_1, player_2
 
 def player_name_AI():
     print(10*chr(9995))
     player_1 = input(f"Hello! What is name of Human Player? \n")
+    game_quit(player_1)
     with open("random_names.txt") as name_file:
         player_2 = "AI_" + random.choice(name_file.read().splitlines())
     print(f"Your opponent this time will be: {player_2}.")
@@ -242,6 +210,7 @@ def gameplay(active_player, shooting_board, coordinates, board_player, board_siz
     print(f"{active_player} it is your shooting board!")
     print_board(shooting_board, board_size, alphabet)
     shot_coordinate = input(f"Please choose coordinates to shoot: ")
+    game_quit(shot_coordinate)
     while True:
         if shot_coordinate.upper() in coordinates.keys():
             row, col = coordinates[shot_coordinate.upper()]
@@ -252,17 +221,18 @@ def gameplay(active_player, shooting_board, coordinates, board_player, board_siz
                     break
                 else:
                     shooting_board[row][col] = colored("M", "red")
-                    print(f"Uuuuupsssssssss! You have missed!") 
+                    print(f"Oooooops! You have missed!") 
                     break
             else:
                 print("This place has already been selected!")
         else:
             print(f"Please select the valid coordinate!")
     is_sunken(shooting_board, sunken_ships_coordinates)
-    print(f"{active_player}, check your result.")
+    print(f"{active_player}, check your shooting board once again.")
     print_board(shooting_board, board_size, alphabet)
     if is_won(shooting_board, board_player):
         print(f"Congratulations! {active_player} You have won! ")
+        graphics.winner_screen_graph()
     input("Press Enter to continue...")
 
 def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_size, alphabet, sunken_ships_coordinates):
@@ -283,6 +253,7 @@ def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_
     print_board(shooting_board, board_size, alphabet)
     if is_won(shooting_board, board_player):
         print(f"Congratulations! {active_player} has won! ")
+        graphics.winner_screen_graph()
     time.sleep(0.5)
 
 def is_won(active_shooting_board, active_player_board):
@@ -339,6 +310,7 @@ def battleships_Human_Human():
         turn +=1
         if is_tie(turn, board_size):
             print(f"Game over! It's a tie!")
+            graphics.tie_screen_graph()
             break
         active_player = change_active_item(player_1, player_2, active_player)
         active_player_board = change_active_item(board_player_1, board_player_2, active_player_board)
@@ -375,6 +347,7 @@ def battleships_Human_AI():
         turn +=1
         if is_tie(turn, board_size):
             print(f"Game over! It's a tie!")
+            graphics.tie_screen_graph()
             break
         active_player = change_active_item(player_1, player_2, active_player)
         active_player_board = change_active_item(board_player_1, board_player_2, active_player_board)
@@ -411,6 +384,7 @@ def battleships_AI_Human():
         turn +=1
         if is_tie(turn, board_size):
             print(f"Game over! It's a tie!")
+            graphics.tie_screen_graph()
             break
         active_player = change_active_item(player_1, player_2, active_player)
         active_player_board = change_active_item(board_player_1, board_player_2, active_player_board)
@@ -444,30 +418,26 @@ def battleships_AI_AI():
         turn +=1
         if is_tie(turn, board_size):
             print(f"Game over! It's a tie!")
+            graphics.tie_screen_graph()
             break
         active_player = change_active_item(player_1, player_2, active_player)
         active_player_board = change_active_item(board_player_1, board_player_2, active_player_board)
         active_shooting_board = change_active_item(shooting_board_player_1, shooting_board_player_2, active_shooting_board)
         active_sunken_ships_coordinates = change_active_item(sunken_ships_coordinates_1, sunken_ships_coordinates_2, active_sunken_ships_coordinates)
 
+def play_again():
+    while True:
+        user_input = input(f"Would you like to play again? (Y)es / (N)o: ")
+        if user_input.lower() == "y":
+            main_menu()
+            break
+        elif user_input.lower() == "n":
+            sys.exit()
+        else:
+            print("Please select 'Y' or 'N'...")
+
 def main_menu():
-    print("""
- _           _   _   _           _     _           
-| |         | | | | | |         | |   (_)          
-| |__   __ _| |_| |_| | ___  ___| |__  _ _ __  ___ 
-| '_ \ / _` | __| __| |/ _ \/ __| '_ \| | '_ \/ __|
-| |_) | (_| | |_| |_| |  __/\__ \ | | | | |_) \__ \\
-|_.__/ \__,_|\__|\__|_|\___||___/_| |_|_| .__/|___/
-                                        | |        
-                                        |_|
-     __  ___        _           __  ___                   
-    /  |/  /____ _ (_)____     /  |/  /___   ____   __  __
-   / /|_/ // __ `// // __ \   / /|_/ // _ \ / __ \ / / / /
-  / /  / // /_/ // // / / /  / /  / //  __// / / // /_/ / 
- /_/  /_/ \__,_//_//_/ /_/  /_/  /_/ \___//_/ /_/ \__,_/  
-                                                         
-    """)
-    print(f"Hello, please choose the game mode!")
+    graphics.main_menu_graph()
     print(f"""
     1. Human vs Human 
     2. Human vs AI
@@ -480,12 +450,7 @@ def main_menu():
                 battleships_Human_Human()
                 break
             elif gamemode == "2":
-                print("""
-    Okay! Vs the AI it is! Who goes first?
-                
-    1 - I want to go first!
-    2 - AI should probably go first...
-                """)
+                graphics.who_starts_graph()
                 who_starts= input(f"Please choose who goes first: ")
                 if who_starts == "1":
                     battleships_Human_AI()
@@ -500,6 +465,7 @@ def main_menu():
                 break
         else:
             print(f"Please provide valid input!")
+    play_again()
 
 def main():
     main_menu()
