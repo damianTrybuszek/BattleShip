@@ -20,9 +20,9 @@ def user_input_board_size():
             if board_size in range(5,11):
                 return board_size
             else:
-                print(f"Please provide the number within the correct range (minimum - 5, maximum - 10)!")
+                print(colored(f"Please provide the number within the correct range (minimum - 5, maximum - 10)!\n", "red"))
         else:
-            print(f"Please provide valid numeric input (5-10)!")
+            print(colored(f"Please provide valid numeric input (5-10)!\n", "red"))
 
 def user_input_ver_or_hor():
     while True:
@@ -31,7 +31,7 @@ def user_input_ver_or_hor():
         if user_input_orientation.lower() == "h" or user_input_orientation.lower() == "v":
             return user_input_orientation
         else:
-            print("Please select a valid orientation ('H' or 'V')! ")
+            print(colored("Please select a valid orientation ('H' or 'V')!\n", "red"))
 
 def is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
     temp_row = row
@@ -58,7 +58,7 @@ def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_
             elif user_input_orientation.lower() == "v":
                 row += 1
         else: 
-            print(f"This place is already used!")
+            print(colored(f"This place is already used!\n", "red"))
             break
 
     for i in range(ship_len):
@@ -109,12 +109,12 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
                     list_ships = list(ships)
                     sunken_ships_coordinates.append(sunken_ship)
                 else:
-                    print(f"Ooops, you can't place a ship like that! Try again!")
+                    print(colored(f"Ooops, you can't place a ship like that! Try again!\n", "red"))
             else:
-                print(f"{user_input.upper()} is already taken! Try another one. ")
+                print(colored(f"{user_input.upper()} is already taken! Try another one.\n", "red"))
         else:
-            print("Please select a valid coordinate!")
-    print(f"\nThis is the {active_player}'s Battleship Board")  
+            print(colored("Please select a valid coordinate!\n", "red"))
+    print(colored(f"\nThis is {active_player}'s Battleship Board", "blue"))  
     print_board(board, board_size, alphabet)
     input("Press Enter to continue...")
     print(100 * "\n")
@@ -143,7 +143,7 @@ def ships_placement_AI(board, board_size, coordinates, alphabet, active_player):
                 continue
         else:
             continue
-    print(f"\nThis is the {active_player}'s Battleship Board")  
+    print(colored(f"\nThis is {active_player}'s Battleship Board", "blue"))  
     print_board(board, board_size, alphabet)
     time.sleep(2)
     print(100 * "\n")
@@ -198,6 +198,7 @@ def player_name_AI():
     with open("random_names.txt") as name_file:
         player_2 = "AI_" + random.choice(name_file.read().splitlines())
     print(f"Your opponent this time will be: {player_2}.")
+    time.sleep(3)
     return player_1, player_2
 
 def player_name_AI_only():
@@ -210,7 +211,7 @@ def player_name_AI_only():
     return player_1, player_2
 
 def gameplay(active_player, shooting_board, coordinates, board_player, board_size, alphabet, sunken_ships_coordinates):
-    print(f"{active_player} it is your shooting board!")
+    print(f"{active_player} this is your shooting board!")
     print_board(shooting_board, board_size, alphabet)
     while True:
         shot_coordinate = input(f"{active_player}, please choose coordinates to shoot: ")
@@ -220,23 +221,23 @@ def gameplay(active_player, shooting_board, coordinates, board_player, board_siz
             if shooting_board[row][col] == "-":
                 if board_player[row][col] == "X":
                     shooting_board[row][col] = colored("H", "blue")
-                    print(f"Good job! You have hit!")
+                    print(colored(f"Good job! You have hit!", "green"))
                     break
                 else:
                     shooting_board[row][col] = colored("M", "red")
-                    print(f"Oooooops! You have missed!") 
+                    print(colored(f"Oooooops! You have missed!", "magenta")) 
                     break
             else:
-                print("This place has already been selected!")
+                print(colored("This place has already been selected!\n", "red"))
         else:
-            print(f"Please select the valid coordinate!")
+            print(colored(f"Please select the valid coordinate!\n", "red"))
     is_sunken(shooting_board, sunken_ships_coordinates)
-    print(f"{active_player}, check your shooting board once again.")
+    print(colored(f"{active_player}, check your shooting board once again.", "yellow"))
     print_board(shooting_board, board_size, alphabet)
     if is_won(shooting_board, board_player):
         print(f"Congratulations! {active_player} You have won! ")
         graphics.winner_screen_graph()
-    input("Press Enter to continue...")
+    input("Press Enter to continue...\n\n")
 
 def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_size, alphabet, sunken_ships_coordinates):
     while True:
@@ -245,14 +246,14 @@ def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_
         if shooting_board[row][col] == "-":
             if board_player[row][col] == "X":
                 shooting_board[row][col] = colored("H", "blue")
-                print(f"\nGood job! You have hit!")
+                # print(colored(f"\nGood job! You have hit!", "green"))
                 break
             else:
                 shooting_board[row][col] = colored("M", "red")
-                print(f"\nUuuuupsssssssss! You have missed!")                
+                # print(f"\nUuuuupsssssssss! You have missed!")                
                 break
     is_sunken(shooting_board, sunken_ships_coordinates)
-    print(f"{active_player}, result.")
+    print(colored(f"{active_player}, result.", "yellow"))
     print_board(shooting_board, board_size, alphabet)
     if is_won(shooting_board, board_player):
         print(f"\nCongratulations! {active_player} has won! ")
@@ -445,17 +446,13 @@ def play_again():
         elif user_input.lower() == "n":
             sys.exit()
         else:
-            print("Please select 'Y' or 'N'...")
+            print(colored("Please select 'Y' or 'N'...\n", "red"))
 
 def main_menu():
     graphics.main_menu_graph()
-    print(f"""
-    1. Human vs Human 
-    2. Human vs AI
-    3. AI vs AI
-    """)
     while True:   
         gamemode = input(f"Please choose the game mode: ")
+        game_quit(gamemode)
         if gamemode in ["1", "2", "3"]:
             if gamemode == "1":
                 battleships_Human_Human()
@@ -470,12 +467,12 @@ def main_menu():
                     battleships_AI_Human()
                     break
                 else:
-                    print(f"Please provide valid input!")
+                    print(colored(f"Please provide valid input!\n", "red"))
             else:
                 battleships_AI_AI()
                 break
         else:
-            print(f"Please provide valid input!")
+            print(colored(f"Please provide valid input!\n", "red"))
     play_again()
 
 def main():
