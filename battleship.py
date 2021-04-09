@@ -5,6 +5,7 @@ import time
 import sys
 from termcolor import colored
 import graphics
+import os
 
 def game_quit(text):
     if text.lower() == 'quit':
@@ -116,6 +117,7 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
     print(f"\nThis is the {active_player}'s Battleship Board")  
     print_board(board, board_size, alphabet)
     input("Press Enter to continue...")
+    print(100 * "\n")
     return board, sunken_ships_coordinates
 
 def ships_placement_AI(board, board_size, coordinates, alphabet, active_player):
@@ -144,6 +146,7 @@ def ships_placement_AI(board, board_size, coordinates, alphabet, active_player):
     print(f"\nThis is the {active_player}'s Battleship Board")  
     print_board(board, board_size, alphabet)
     time.sleep(2)
+    print(100 * "\n")
     return board, sunken_ships_coordinates
 
 def init_board(board_size):
@@ -209,9 +212,9 @@ def player_name_AI_only():
 def gameplay(active_player, shooting_board, coordinates, board_player, board_size, alphabet, sunken_ships_coordinates):
     print(f"{active_player} it is your shooting board!")
     print_board(shooting_board, board_size, alphabet)
-    shot_coordinate = input(f"Please choose coordinates to shoot: ")
-    game_quit(shot_coordinate)
     while True:
+        shot_coordinate = input(f"{active_player}, please choose coordinates to shoot: ")
+        game_quit(shot_coordinate)
         if shot_coordinate.upper() in coordinates.keys():
             row, col = coordinates[shot_coordinate.upper()]
             if shooting_board[row][col] == "-":
@@ -242,17 +245,17 @@ def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_
         if shooting_board[row][col] == "-":
             if board_player[row][col] == "X":
                 shooting_board[row][col] = colored("H", "blue")
-                print(f"Good job! You have hit!")
+                print(f"\nGood job! You have hit!")
                 break
             else:
                 shooting_board[row][col] = colored("M", "red")
-                print(f"Uuuuupsssssssss! You have missed!")                
+                print(f"\nUuuuupsssssssss! You have missed!")                
                 break
     is_sunken(shooting_board, sunken_ships_coordinates)
     print(f"{active_player}, result.")
     print_board(shooting_board, board_size, alphabet)
     if is_won(shooting_board, board_player):
-        print(f"Congratulations! {active_player} has won! ")
+        print(f"\nCongratulations! {active_player} has won! ")
         graphics.winner_screen_graph()
     time.sleep(0.5)
 

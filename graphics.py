@@ -22,7 +22,7 @@ def main_menu_graph():
 
 def who_starts_graph():
     print("""
-    Okay! Vs the AI it is! Who goes first?
+    Okay! Player vs the AI it is! Who goes first?
                 
     1 - I want to go first!
     2 - AI should probably go first...
