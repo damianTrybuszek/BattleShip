@@ -441,13 +441,9 @@ def play_again():
 
 def main_menu():
     graphics.main_menu_graph()
-    print(f"""
-    1. Human vs Human 
-    2. Human vs AI
-    3. AI vs AI
-    """)
     while True:   
         gamemode = input(f"Please choose the game mode: ")
+        game_quit(gamemode)
         if gamemode in ["1", "2", "3"]:
             if gamemode == "1":
                 battleships_Human_Human()

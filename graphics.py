@@ -19,6 +19,11 @@ def main_menu_graph():
     """)
     print(f"Hello, please choose the game mode!")
     print(f"Pressing {colored('quit', 'red')} at any stage will exit the game.")
+    print(f"""
+    1. Human vs Human 
+    2. Human vs AI
+    3. AI vs AI
+    """)
 
 def who_starts_graph():
     print("""
