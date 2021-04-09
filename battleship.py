@@ -271,6 +271,10 @@ def is_won(active_shooting_board, active_player_board):
 def is_tie(turn, board_size):
     return turn // 2 >= (board_size**2)*0.75
 
+def turn_limit(board_size, turn):
+    limit_of_turn = (board_size**2)*0.75 - turn/2
+    print(colored(f"The limit of your turns is {int(limit_of_turn) }.\n", "yellow"))
+    
 def is_sunken(shooting_board, sunken_ships_coordinates):
     for element in sunken_ships_coordinates:
         ship_len = len(element)
@@ -307,6 +311,7 @@ def battleships_Human_Human():
     active_sunken_ships_coordinates = sunken_ships_coordinates_2
 
     while is_won(active_shooting_board, active_player_board) == False:
+        turn_limit(board_size, turn)
         gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         if is_won(active_shooting_board, active_player_board):
             break
@@ -339,8 +344,9 @@ def battleships_Human_AI():
     active_player_board = board_player_2
     active_shooting_board = shooting_board_player_1
     active_sunken_ships_coordinates = sunken_ships_coordinates_2
-
+   
     while is_won(active_shooting_board, active_player_board) == False:
+        turn_limit(board_size, turn)
         if active_player == player_1:
             gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         elif active_player == player_2:
@@ -378,6 +384,7 @@ def battleships_AI_Human():
     active_sunken_ships_coordinates = sunken_ships_coordinates_2
 
     while is_won(active_shooting_board, active_player_board) == False:
+        turn_limit(board_size, turn)
         if active_player == player_2:
             gameplay(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         elif active_player == player_1:
@@ -415,6 +422,7 @@ def battleships_AI_AI():
     active_sunken_ships_coordinates = sunken_ships_coordinates_2
 
     while is_won(active_shooting_board, active_player_board) == False:
+        turn_limit(board_size, turn)
         gameplay_AI(active_player, active_shooting_board, coordinates, active_player_board, board_size, alphabet, active_sunken_ships_coordinates)
         if is_won(active_shooting_board, active_player_board):
             break
