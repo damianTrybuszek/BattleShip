@@ -45,10 +45,8 @@ def is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
             temp_row += 1
     return True
 
-def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len):
+def mark_ship(board, discrete_board, coordinates, user_input_orientation, row, col, ship_len):
     sunken_ships = []
-    discrete_row = copy.deepcopy(row)
-    discrete_col = copy.deepcopy(col)
     for i in range(ship_len):
         if discrete_board[row][col] == "-":
             board[row][col] = "X"
@@ -60,7 +58,24 @@ def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_
         else: 
             print(colored(f"This place is already used!\n", "red"))
             break
+    return sunken_ships
 
+def mark_ship_ai(board, discrete_board, coordinates, user_input_orientation, row, col, ship_len):
+    sunken_ships = []
+    for i in range(ship_len):
+        if discrete_board[row][col] == "-":
+            board[row][col] = "X"
+            sunken_ships.append((row, col))
+            if user_input_orientation.lower() == "h":
+                col += 1
+            elif user_input_orientation.lower() == "v":
+                row += 1
+        else: 
+            break
+    return sunken_ships
+
+
+def mark_ship_discrete_board(discrete_board, coordinates, user_input_orientation, discrete_row, discrete_col, ship_len):
     for i in range(ship_len):
         discrete_board[discrete_row][discrete_col] = "X"
         if user_input_orientation.lower() == "h":
@@ -83,7 +98,6 @@ def mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_
             if (discrete_row, discrete_col+1) in coordinates.values():
                 discrete_board[discrete_row][discrete_col+1] = "X"
             discrete_row += 1
-    return sunken_ships
 
 def ships_placement(board, board_size, coordinates, alphabet, active_player):
     sunken_ships_coordinates = []
@@ -97,12 +111,16 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
         user_input = input(f"{active_player} please place your ships on the map. Available ships for placement: {ships}. Current ship being placed: {list_ships[0]}. Please select a valid coordinate: ")
         game_quit(user_input)
         if user_input.upper() in coordinates.keys():
-            user_input_orientation = user_input_ver_or_hor()
+            # user_input_orientation = user_input_ver_or_hor()
             row, col = coordinates[user_input.upper()]
+            discrete_row = copy.deepcopy(row)
+            discrete_col = copy.deepcopy(col)
             ship_len = ship_length[list_ships[0]]
             if discrete_board[row][col] == "-":
+                user_input_orientation = user_input_ver_or_hor()
                 if is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
-                    sunken_ship = mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len)
+                    sunken_ship = mark_ship(board, discrete_board, coordinates, user_input_orientation, row, col, ship_len)
+                    mark_ship_discrete_board(discrete_board, coordinates, user_input_orientation, discrete_row, discrete_col, ship_len)
                     ships[list_ships[0]] -= 1
                     if ships[list_ships[0]] == 0:
                         ships.pop(list_ships[0])
@@ -111,7 +129,7 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
                 else:
                     print(colored(f"Ooops, you can't place a ship like that! Try again!\n", "red"))
             else:
-                print(colored(f"{user_input.upper()} is already taken! Try another one.\n", "red"))
+                print(colored(f"You can't place a ship on {user_input.upper()}! Try another one.\n", "red"))
         else:
             print(colored("Please select a valid coordinate!\n", "red"))
     print(colored(f"\nThis is {active_player}'s Battleship Board", "blue"))  
@@ -130,10 +148,13 @@ def ships_placement_AI(board, board_size, coordinates, alphabet, active_player):
         user_input = random.choice(list(coordinates.keys()))
         user_input_orientation = random.choice(["h","v"])
         row, col = coordinates[user_input]
+        discrete_row = copy.deepcopy(row)
+        discrete_col = copy.deepcopy(col)
         ship_len = ship_length[list_ships[0]]
         if discrete_board[row][col] == "-":
             if is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
-                sunken_ship = mark_ship(board, discrete_board, ship_length, coordinates, user_input, user_input_orientation, list_ships, row, col, ship_len)
+                sunken_ship = mark_ship_ai(board, discrete_board, coordinates, user_input_orientation, row, col, ship_len)
+                mark_ship_discrete_board(discrete_board, coordinates, user_input_orientation, discrete_row, discrete_col, ship_len)
                 ships[list_ships[0]] -= 1
                 if ships[list_ships[0]] == 0:
                     ships.pop(list_ships[0])
@@ -246,11 +267,9 @@ def gameplay_AI(active_player, shooting_board, coordinates, board_player, board_
         if shooting_board[row][col] == "-":
             if board_player[row][col] == "X":
                 shooting_board[row][col] = colored("H", "blue")
-                # print(colored(f"\nGood job! You have hit!", "green"))
                 break
             else:
-                shooting_board[row][col] = colored("M", "red")
-                # print(f"\nUuuuupsssssssss! You have missed!")                
+                shooting_board[row][col] = colored("M", "red")               
                 break
     is_sunken(shooting_board, sunken_ships_coordinates)
     print(colored(f"{active_player}, result.", "yellow"))
@@ -274,7 +293,7 @@ def is_tie(turn, board_size):
 
 def turn_limit(board_size, turn):
     limit_of_turn = (board_size**2)*0.75 - turn/2
-    print(colored(f"The limit of your turns is {int(limit_of_turn) }.\n", "yellow"))
+    print(colored(f"Turn limit: {int(limit_of_turn) }.\n", "yellow"))
     
 def is_sunken(shooting_board, sunken_ships_coordinates):
     for element in sunken_ships_coordinates:
@@ -440,10 +459,10 @@ def battleships_AI_AI():
 def play_again():
     while True:
         user_input = input(f"Would you like to play again? (Y)es / (N)o: ")
-        if user_input.lower() == "y":
+        if user_input.lower() == "y" or user_input.lower() == "yes":
             main_menu()
             break
-        elif user_input.lower() == "n":
+        elif user_input.lower() == "n" or user_input.lower() == "no":
             sys.exit()
         else:
             print(colored("Please select 'Y' or 'N'...\n", "red"))
