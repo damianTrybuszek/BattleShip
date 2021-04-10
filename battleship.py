@@ -36,7 +36,7 @@ def user_input_ver_or_hor():
 def is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
     temp_row = row
     temp_col = col
-    for i in range(ship_len):
+    for _ in range(ship_len):
         if (temp_row, temp_col) not in coordinates.values():
             return False
         if user_input_orientation.lower() == "h" and (temp_row, temp_col) in coordinates.values():
@@ -47,7 +47,7 @@ def is_in_the_board(row, col, ship_len, user_input_orientation, coordinates):
 
 def mark_ship(board, discrete_board, coordinates, user_input_orientation, row, col, ship_len):
     sunken_ships = []
-    for i in range(ship_len):
+    for _ in range(ship_len):
         if discrete_board[row][col] == "-":
             board[row][col] = "X"
             sunken_ships.append((row, col))
@@ -62,7 +62,7 @@ def mark_ship(board, discrete_board, coordinates, user_input_orientation, row, c
 
 def mark_ship_ai(board, discrete_board, coordinates, user_input_orientation, row, col, ship_len):
     sunken_ships = []
-    for i in range(ship_len):
+    for _ in range(ship_len):
         if discrete_board[row][col] == "-":
             board[row][col] = "X"
             sunken_ships.append((row, col))
@@ -76,7 +76,7 @@ def mark_ship_ai(board, discrete_board, coordinates, user_input_orientation, row
 
 
 def mark_ship_discrete_board(discrete_board, coordinates, user_input_orientation, discrete_row, discrete_col, ship_len):
-    for i in range(ship_len):
+    for _ in range(ship_len):
         discrete_board[discrete_row][discrete_col] = "X"
         if user_input_orientation.lower() == "h":
             if (discrete_row-1, discrete_col) in coordinates.values():
@@ -111,7 +111,6 @@ def ships_placement(board, board_size, coordinates, alphabet, active_player):
         user_input = input(f"{active_player} please place your ships on the map. Available ships for placement: {ships}. Current ship being placed: {list_ships[0]}. Please select a valid coordinate: ")
         game_quit(user_input)
         if user_input.upper() in coordinates.keys():
-            # user_input_orientation = user_input_ver_or_hor()
             row, col = coordinates[user_input.upper()]
             discrete_row = copy.deepcopy(row)
             discrete_col = copy.deepcopy(col)
@@ -191,18 +190,17 @@ def coordinates_dict(board_size, alphabet):
 
 def available_ships(board_size):
     if board_size == 5:
-        available_ships = {"1x3":1, "1x2":1, "1x1":2}
+        return {"1x3":1, "1x2":1, "1x1":2}
     elif board_size == 6:
-        available_ships = {"1x3":1, "1x2":2, "1x1":2}
+        return {"1x3":1, "1x2":2, "1x1":2}
     elif board_size == 7:
-        available_ships = {"1x4":1, "1x3":1, "1x2":2, "1x1":2}
+        return {"1x4":1, "1x3":1, "1x2":2, "1x1":2}
     elif board_size == 8:
-        available_ships = {"1x4":1, "1x3":2, "1x2":2, "1x1":2}
+        return {"1x4":1, "1x3":2, "1x2":2, "1x1":2}
     elif board_size == 9:
-        available_ships = {"1x4":1, "1x3":2, "1x2":3, "1x1":2}
+        return {"1x4":1, "1x3":2, "1x2":3, "1x1":2}
     else:
-        available_ships = {"1x5":1, "1x4":2, "1x3":3, "1x2":4}
-    return available_ships
+        return {"1x5":1, "1x4":2, "1x3":3, "1x2":4}
 
 def player_name():
     print(10*chr(9995))
